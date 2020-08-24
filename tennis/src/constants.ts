@@ -4,4 +4,5 @@ export enum Mode {
   TIEBREAK,
 }
 
-export const TIEBREAK_MINIMUM = 7;
+export const TIEBREAK_MIN_POINTS = 7;
+export const MIN_GAMES = 5;

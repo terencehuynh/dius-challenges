@@ -18,7 +18,7 @@ export const hasAdvantage = (mode: Mode, p1: Player, p2: Player) => {
 export const hasWonGame = (mode: Mode, p1: Player, p2: Player) => {
   switch (mode) {
     case Mode.TIEBREAK: {
-      if (p1.points < TIEBREAK_MIN_POINTS || p2.points < TIEBREAK_MIN_POINTS)
+      if (p1.points < TIEBREAK_MIN_POINTS && p2.points < TIEBREAK_MIN_POINTS)
         return null;
       // If does reach tiebreak minimum, process points similar to DEUCE mode
       // (i.e. needs to have a margin of two points between them)
@@ -41,7 +41,7 @@ export const hasWonGame = (mode: Mode, p1: Player, p2: Player) => {
 
 export const hasWonMatch = (p1: Player, p2: Player) => {
   // Check if they reach the minimum number of games
-  if (p1.games < MIN_GAMES || p2.games < MIN_GAMES) return null;
+  if (p1.games < MIN_GAMES && p2.games < MIN_GAMES) return null;
 
   // Must have a margin of two games before match is won
   const diff = p1.games - p2.games;
