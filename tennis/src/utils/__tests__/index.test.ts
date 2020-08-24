@@ -1,7 +1,13 @@
 import Player from "../../Player";
 import { Mode } from "../../constants";
 
-import { isDeuce, isTiebreak, hasWonGame } from "../";
+import {
+  isDeuce,
+  isTiebreak,
+  hasAdvantage,
+  hasWonGame,
+  hasWonMatch,
+} from "../";
 
 describe("Utils", () => {
   describe("isDeuce", () => {
@@ -58,6 +64,39 @@ describe("Utils", () => {
       const p1 = new Player("Player 1");
       const p2 = new Player("Player 2");
       expect(isTiebreak(p1, p2)).toBe(false);
+    });
+  });
+
+  describe("hasAdvantage", () => {
+    it("returns player 1 has advantage", () => {
+      const p1 = new Player("Player 1", { points: 4 });
+      const p2 = new Player("Player 2", { points: 3 });
+      const mode = Mode.NORMAL;
+      expect(hasAdvantage(mode, p1, p2)).toEqual(p1.name);
+    });
+    it("returns player 1 has advantage", () => {
+      const p1 = new Player("Player 1", { points: 3 });
+      const p2 = new Player("Player 2", { points: 4 });
+      const mode = Mode.NORMAL;
+      expect(hasAdvantage(mode, p1, p2)).toEqual(p2.name);
+    });
+    it("fails when there is no advantage (i.e. equal)", () => {
+      const p1 = new Player("Player 1", { points: 3 });
+      const p2 = new Player("Player 2", { points: 3 });
+      const mode = Mode.DEUCE;
+      expect(hasAdvantage(mode, p1, p2)).toEqual(null);
+    });
+    it("fails on incorrect mode (mode NORMAL)", () => {
+      const p1 = new Player("Player 1", { points: 3 });
+      const p2 = new Player("Player 2", { points: 3 });
+      const mode = Mode.NORMAL;
+      expect(hasAdvantage(mode, p1, p2)).toEqual(null);
+    });
+    it("fails on incorrect mode (mode TIEBREAK)", () => {
+      const p1 = new Player("Player 1", { points: 3 });
+      const p2 = new Player("Player 2", { points: 3 });
+      const mode = Mode.TIEBREAK;
+      expect(hasAdvantage(mode, p1, p2)).toEqual(null);
     });
   });
 
@@ -139,6 +178,29 @@ describe("Utils", () => {
       const p2 = new Player("Player 2", { points: 6 });
       const mode = Mode.TIEBREAK;
       expect(hasWonGame(mode, p1, p2)).toEqual(null);
+    });
+  });
+
+  describe("hasWonMatch", () => {
+    it("return null if not minimum number", () => {
+      const p1 = new Player("Player 1", { games: 0 });
+      const p2 = new Player("Player 2", { games: 0 });
+      expect(hasWonMatch(p1, p2)).toEqual(null);
+    });
+    it("return null if tiebreaker", () => {
+      const p1 = new Player("Player 1", { games: 6 });
+      const p2 = new Player("Player 2", { games: 6 });
+      expect(hasWonMatch(p1, p2)).toEqual(null);
+    });
+    it("returns winning player when meeting win conditions (6-4)", () => {
+      const p1 = new Player("Player 1", { games: 6 });
+      const p2 = new Player("Player 2", { games: 4 });
+      expect(hasWonMatch(p1, p2)).toEqual({ winner: p1.name });
+    });
+    it("returns winning player when meeting win conditions (7-5)", () => {
+      const p1 = new Player("Player 1", { games: 7 });
+      const p2 = new Player("Player 2", { games: 5 });
+      expect(hasWonMatch(p1, p2)).toEqual({ winner: p1.name });
     });
   });
 });
