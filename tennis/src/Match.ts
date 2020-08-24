@@ -108,12 +108,11 @@ class Match {
     if (wonMatch) {
       this.winner = wonMatch.winner;
       this.completed = true;
-      return;
+    } else {
+      this.mode = isTiebreak(p1, p2) ? Mode.TIEBREAK : Mode.NORMAL;
+      p1.newGame();
+      p2.newGame();
     }
-
-    if (isTiebreak(p1, p2)) this.mode = Mode.TIEBREAK;
-    p1.newGame();
-    p2.newGame();
   }
 }
 
