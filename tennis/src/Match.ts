@@ -95,24 +95,24 @@ class Match {
    *    before resetting the points to signifiy a new game is to be played.
    */
   private afterAddPoint() {
-    const [p1, p2] = Object.values(this.players);
+    const [p1, p2] = Object.values(this.set);
 
     // Have they won a game?
-    const wonGame = hasWonGame(this.mode, p1, p2);
+    const wonGame = hasWonGame(this._mode, p1, p2);
     if (!wonGame) {
-      if (isDeuce(this.mode, p1, p2)) this.mode = Mode.DEUCE;
+      if (isDeuce(this._mode, p1, p2)) this._mode = Mode.DEUCE;
       return;
     }
-    this.players[wonGame.winner].addGame();
-    const wonMatch = hasWonMatch(p1, p2);
+    this.set[wonGame.winner].addGame();
+    const wonMatch = hasWonMatch(this._mode, p1, p2);
     if (wonMatch) {
-      this.winner = wonMatch.winner;
-      this.completed = true;
+      this._winner = wonMatch.winner;
+      this._completed = true;
     } else {
-      this.mode = isTiebreak(p1, p2) ? Mode.TIEBREAK : Mode.NORMAL;
-      p1.newGame();
-      p2.newGame();
+      this._mode = isTiebreak(p1, p2) ? Mode.TIEBREAK : Mode.NORMAL;
     }
+    p1.newGame();
+    p2.newGame();
   }
 }
 

@@ -185,22 +185,38 @@ describe("Utils", () => {
     it("return null if not minimum number", () => {
       const p1 = new Player("Player 1", { games: 0 });
       const p2 = new Player("Player 2", { games: 0 });
-      expect(hasWonMatch(p1, p2)).toEqual(null);
+      const mode = Mode.NORMAL;
+      expect(hasWonMatch(mode, p1, p2)).toEqual(null);
     });
     it("return null if tiebreaker", () => {
       const p1 = new Player("Player 1", { games: 6 });
       const p2 = new Player("Player 2", { games: 6 });
-      expect(hasWonMatch(p1, p2)).toEqual(null);
+      const mode = Mode.NORMAL;
+      expect(hasWonMatch(mode, p1, p2)).toEqual(null);
     });
     it("returns winning player when meeting win conditions (6-4)", () => {
       const p1 = new Player("Player 1", { games: 6 });
       const p2 = new Player("Player 2", { games: 4 });
-      expect(hasWonMatch(p1, p2)).toEqual({ winner: p1.name });
+      const mode = Mode.NORMAL;
+      expect(hasWonMatch(mode, p1, p2)).toEqual({ winner: p1.name });
     });
     it("returns winning player when meeting win conditions (7-5)", () => {
       const p1 = new Player("Player 1", { games: 7 });
       const p2 = new Player("Player 2", { games: 5 });
-      expect(hasWonMatch(p1, p2)).toEqual({ winner: p1.name });
+      const mode = Mode.NORMAL;
+      expect(hasWonMatch(mode, p1, p2)).toEqual({ winner: p1.name });
+    });
+    it("deuce doesn't make a difference to normal", () => {
+      const p1 = new Player("Player 1", { games: 7 });
+      const p2 = new Player("Player 2", { games: 5 });
+      const mode = Mode.DEUCE;
+      expect(hasWonMatch(mode, p1, p2)).toEqual({ winner: p1.name });
+    });
+    it("returns winning player when meeting win conditions (7-6, with tiebreak)", () => {
+      const p1 = new Player("Player 1", { games: 7 });
+      const p2 = new Player("Player 2", { games: 6 });
+      const mode = Mode.TIEBREAK;
+      expect(hasWonMatch(mode, p1, p2)).toEqual({ winner: p1.name });
     });
   });
 });

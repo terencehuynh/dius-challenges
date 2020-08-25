@@ -92,17 +92,20 @@ export const hasWonGame = (mode: Mode, p1: Player, p2: Player) => {
  * To win a match, a player must win the minimum number of game points (5) and
  * needs a margin of two game points between them and the player to win.
  *
+ * @param  mode (Mode)    enum value if the game is normal, deuce or tiebreak
  * @param  p1   (Player)  player one
  * @param  p2   (Player)  player two
  * @return an object with the player's name as the winner, or null
  */
-export const hasWonMatch = (p1: Player, p2: Player) => {
+export const hasWonMatch = (mode: Mode, p1: Player, p2: Player) => {
+  // If Ttiebreak,
   // Check if they reach the minimum number of games
   if (p1.games < MIN_GAMES && p2.games < MIN_GAMES) return null;
 
   // Must have a margin of two games before match is won
   const diff = p1.games - p2.games;
-  if (diff > 1) return { winner: p1.name };
-  if (diff < -1) return { winner: p2.name };
+  const margin = mode === Mode.TIEBREAK ? 1 : 2;
+  if (diff >= margin) return { winner: p1.name };
+  if (diff <= margin * -1) return { winner: p2.name };
   return null;
 };
