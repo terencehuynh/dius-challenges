@@ -15,19 +15,33 @@ interface IMatchState {
   completed?: boolean;
 }
 
+type MatchSet = { [key: string]: Player };
+
 class Match {
-  private players: { [key: string]: Player };
-  private mode: Mode;
-  private completed: boolean;
-  private winner: string;
+  private set: MatchSet;
+  private _mode: Mode = Mode.NORMAL;
+  private _completed: boolean = false;
+  private _winner: string = null;
+
+  get mode() {
+    return this._mode;
+  }
+
+  get winner() {
+    return this._winner;
+  }
+
+  get completed() {
+    return this._completed;
+  }
 
   constructor(player1: string, player2: string, state?: IMatchState) {
-    this.players = {
+    this.set = {
       [player1]: new Player(player1, state?.player1State),
       [player2]: new Player(player2, state?.player2State),
     };
-    this.mode = state?.mode ?? Mode.NORMAL;
-    this.completed = state?.completed ?? false;
+    this._mode = state?.mode ?? Mode.NORMAL;
+    this._completed = state?.completed ?? false;
   }
 
   /**
@@ -36,10 +50,10 @@ class Match {
    */
   pointWonBy(player: string) {
     // If the match has been won by someone, stop allowing this to
-    if (this.completed) return;
+    if (this._completed) return;
 
     // Add point and recalculate state
-    this.players[player].addPoint();
+    this.set[player].addPoint();
     this.afterAddPoint();
   }
 
@@ -51,19 +65,20 @@ class Match {
    * Note: in a tiebreaker situation, the normal scoring system is changed to
    * just showing the "raw" number of points (e.g. 1, 2, 3 vs 15, 30, 40).
    */
-  output() {
-    const [p1, p2] = Object.values(this.players);
-    const completedText = this.completed ? `(${this.winner})` : "";
-    let points = "";
+  score() {
+    const [p1, p2] = Object.values(this.set);
 
-    switch (this.mode) {
+    // If no points, just output the games
+    const games = `${p1.games}-${p2.games}`;
+    const isEmpty = p1.points === 0 && p2.points === 0;
+    if (isEmpty) return games;
+
+    // If there are points, then determine what to display as points
+    let points = "";
+    switch (this._mode) {
       case Mode.DEUCE: {
-        const advantage = hasAdvantage(this.mode, p1, p2);
-        if (hasAdvantage) {
-          points = `Advantage ${advantage}`;
-        } else {
-          points = "Deuce";
-        }
+        const advantage = hasAdvantage(this._mode, p1, p2);
+        points = advantage ? `Advantage ${advantage}` : "Deuce";
         break;
       }
       case Mode.TIEBREAK: {
@@ -73,8 +88,7 @@ class Match {
       default:
         points = `${p1.tennisPoints}-${p2.tennisPoints}`;
     }
-
-    return `${p1.games}-${p2.games}, ${points}${completedText}`;
+    return `${games}, ${points}`;
   }
 
   /**
