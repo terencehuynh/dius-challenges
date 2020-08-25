@@ -1,5 +1,5 @@
-import Player from "../../Player";
-import { Mode } from "../../constants";
+import Player from "../Player";
+import { Mode } from "../constants";
 
 import {
   isDeuce,
@@ -7,7 +7,7 @@ import {
   hasAdvantage,
   hasWonGame,
   hasWonMatch,
-} from "../";
+} from "../utils";
 
 describe("Utils", () => {
   describe("isDeuce", () => {
