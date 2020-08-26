@@ -35,6 +35,13 @@ class Match {
     return this._completed;
   }
 
+  /**
+   * Construct a new match.
+   *
+   * @param player1 name of player 1
+   * @param player2 name of player 2
+   * @param state   (optional) set the match state, used for testing
+   */
   constructor(player1: string, player2: string, state?: IMatchState) {
     this.set = {
       [player1]: new Player(player1, state?.player1State),
@@ -96,17 +103,18 @@ class Match {
    * the following:
    *
    * 1. Check if the game has been won by a player.
-   *    1a. If not, then we check if it is in a deuce state. We terminate from
-   *        here because the game is stil continuing.
+   *    - If not, then we check if it is in a deuce state. We terminate from
+   *      here because the game is stil continuing.
    *
    * 2. If the game has been won by the player, add it to the winner's scoreboard
    *
    * 3. Check, by adding the game, that the overall match has been won.
-   *    3a. If the match has been won, we mark match as completed and terminate
-   *        from here since there is nothing to do.
+   *    - If yes, mark the winner and completed status.
+   *    - If no, check if it is a tiebreak situation and change the mode
+   *      accoridngly
    *
-   * 4. If the match is still continuing, we check if there's a tiebreak match
-   *    before resetting the points to signifiy a new game is to be played.
+   * 4. If the match is still continuing, call newGame for each player to reset
+   *    the number of points.
    */
   private afterAddPoint() {
     const [p1, p2] = Object.values(this.set);
